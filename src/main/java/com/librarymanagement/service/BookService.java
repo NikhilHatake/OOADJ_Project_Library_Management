@@ -30,8 +30,8 @@ public class BookService {
                 books.add(book);
             }
         } catch (SQLException e) {
-            // Handle SQL exceptions (e.g., log the error)
-            e.printStackTrace();
+            logger.error("Error occurred:", e); // Log the error
+            throw new RuntimeException("Error executing database operation", e);
         }
         return books;
     }
@@ -92,9 +92,31 @@ public class BookService {
         } catch (SQLException e) {
             System.out.println("Error adding book: " + newBook.getTitle());
             System.out.println("SQL Error: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            logger.error("Error occurred:", e); // Log the error
+            throw new RuntimeException("Error executing database operation", e);
 
+        }
+
+
+    }
+    public boolean deleteBook(long bookId) {
+        String sql = "DELETE FROM books WHERE id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, bookId);
+
+            logger.info("Attempting to delete book with ID: {}", bookId); // Log the bookId
+
+            int rowsAffected = stmt.executeUpdate();
+
+            logger.info("Rows affected: {}", rowsAffected); // Log the result
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.error("Error deleting book with ID " + bookId, e);
+            throw new RuntimeException("Error deleting book", e);
         }
     }
 }

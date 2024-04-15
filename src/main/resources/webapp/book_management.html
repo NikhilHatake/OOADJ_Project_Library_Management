@@ -18,7 +18,14 @@
         <button type="submit">Add Book</button>
     </form>
 </div>
-
+<script type="text/template" id="book-template">
+    <div class="book" data-book-id="{{bookId}}">
+        <h3>{{title}}</h3>
+        <p>Author: {{author}}</p>
+        <p>ISBN: {{isbn}}</p>
+        <button class="delete-button">Delete</button>
+    </div>
+</script>
 <div id="book-list"> </div>
 
 <script src="js/management_script.js"></script>

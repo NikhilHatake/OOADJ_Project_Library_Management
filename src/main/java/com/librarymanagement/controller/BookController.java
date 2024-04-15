@@ -30,11 +30,7 @@ public class BookController {
             }
             String searchTerm = request.queryParams(searchBy);
 
-            System.out.println("Search By: " + searchBy);
-            System.out.println("Search Term: " + searchTerm);
-
-            List<Book> books = bookService.searchBooks(searchBy, searchTerm);
-            System.out.println("Books found: " + books);
+            List<Book> books;
             if (searchTerm != null) {
                 books = bookService.searchBooks(searchBy, searchTerm);
             } else {
@@ -44,6 +40,7 @@ public class BookController {
             response.type("application/json");
             return gson.toJson(books);
         });
+
 
         post("/books", (request, response) -> {
             Book newBook = gson.fromJson(request.body(), Book.class);
@@ -55,6 +52,19 @@ public class BookController {
             } else {
                 response.status(500); // Internal Server Error
                 return "Error saving book";
+            }
+        });
+
+        delete("/books/:id", (request, response) -> {
+            long bookId = Long.parseLong(request.params("id"));
+            boolean deleted = bookService.deleteBook(bookId);
+
+            if (deleted) {
+                response.status(204); // No Content
+                return ""; // Empty response is sufficient
+            } else {
+                response.status(500); // Internal Server Error (or 404 if appropriate)
+                return "Error deleting book";
             }
         });
     }
