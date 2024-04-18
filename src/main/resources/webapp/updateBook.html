@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Management</title>
+    <link rel="stylesheet" href="css/management_styles.css">
+</head>
+<body>
+<h1>Book Management</h1>
+
+<div id="update-book-form" >
+    <h2>Update Book</h2>
+    <form id="update-book">
+        <input type="hidden" id="update-book-id">
+        <input type="text" id="update-title" placeholder="Title" required>
+        <input type="text" id="update-author" placeholder="Author" required>
+        <input type="text" id="update-isbn" placeholder="ISBN" required>
+        <button type="submit">Update Book</button>
+        <button type="button" onclick="cancelUpdate()">Cancel</button>
+    </form>
+</div>
+
+<div id="book-list"> </div>
+
+<script src="js/delete_script.js"></script>
+</body>
+</html>

@@ -16,7 +16,7 @@ public class BookService {
 
     public List<Book> getAllBooks() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT title, author, isbn FROM books";
+        String sql = "SELECT id, title, author, isbn ,is_borrowed FROM books";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -24,6 +24,7 @@ public class BookService {
 
             while (rs.next()) {
                 Book book = new Book();
+                book.setId(rs.getLong("id"));
                 book.setTitle(rs.getString("title") != null ? rs.getString("title") : ""); // Handle potential null
                 book.setAuthor(rs.getString("author") != null ? rs.getString("author") : "");
                 book.setIsbn(rs.getString("isbn") != null ? rs.getString("isbn") : "");
@@ -99,24 +100,138 @@ public class BookService {
 
 
     }
-    public boolean deleteBook(long bookId) {
-        String sql = "DELETE FROM books WHERE id = ?";
+
+    public boolean updateBook(long bookId, Book updatedBook) {
+        String sqlUpdate = "UPDATE books SET title = ?, author = ?, isbn = ? WHERE id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
 
-            stmt.setLong(1, bookId);
+            // 2. Update the book's properties
+            stmt.setString(1, updatedBook.getTitle());
+            stmt.setString(2, updatedBook.getAuthor());
+            stmt.setString(3, updatedBook.getIsbn());
+            stmt.setLong(4, bookId);
 
-            logger.info("Attempting to delete book with ID: {}", bookId); // Log the bookId
-
+            // 3. Save the updated book back to the database
             int rowsAffected = stmt.executeUpdate();
 
-            logger.info("Rows affected: {}", rowsAffected); // Log the result
-
-            return rowsAffected > 0;
+            return rowsAffected > 0; // True if the update succeeded
         } catch (SQLException e) {
-            logger.error("Error deleting book with ID " + bookId, e);
-            throw new RuntimeException("Error deleting book", e);
+            System.err.println("Error occurred during book update: " + e.getMessage());
+            return false; // Indicate update failure
         }
+    }
+
+    public static boolean deleteBook(Connection conn, int bookId) throws SQLException {
+        System.out.println("Attempting to delete book with ID: " + bookId); // Backend Logging
+
+        String deleteQuery = "DELETE FROM books WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+            stmt.setInt(1, bookId);
+            int rowsDeleted = stmt.executeUpdate();
+
+            System.out.println("Rows deleted: " + rowsDeleted); // Log query outcome
+
+            return rowsDeleted > 0; // True if deleted successfully
+        } catch (SQLException e) {
+            System.err.println("Error deleting book: " + e.getMessage()); // Log any exceptions
+            throw e; // Re-throw to propagate the error
+        }
+    }
+    public static boolean borrowBook(Connection conn, int bookId) throws SQLException {
+        // Start a transaction
+        conn.setAutoCommit(false);
+
+        try {
+            // 1. Fetch the book
+            String selectQuery = "SELECT * FROM books WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+                stmt.setInt(1, bookId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        boolean isBorrowed = rs.getBoolean("is_borrowed");
+
+                        // 2. Check if already borrowed
+                        if (isBorrowed) {
+                            return false; // Book is unavailable
+                        }
+
+                        // 3. Update the book status
+                        String updateQuery = "UPDATE books SET is_borrowed = true WHERE id = ?";
+                        try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                            updateStmt.setInt(1, bookId);
+                            int rowsUpdated = updateStmt.executeUpdate();
+
+                            // 4. Commit the transaction if update successful
+                            if (rowsUpdated > 0) {
+                                conn.commit();
+                                return true;
+                            } else {
+                                return false; // Update failed
+                            }
+                        }
+                    } else {
+                        return false; // Book not found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            // Rollback the transaction in case of any exceptions
+            conn.rollback();
+            throw e; // Re-throw the exception
+        } finally {
+            // Reset auto-commit to its original state
+            conn.setAutoCommit(true);
+        }
+    }
+    public static boolean returnBook(Connection conn, int bookId) throws SQLException {
+        String updateQuery = "UPDATE books SET is_borrowed = false WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setInt(1, bookId);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
+
+    public Book fetchBookById(Connection conn, int bookId) throws SQLException {
+        String selectQuery = "SELECT * FROM books WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+            stmt.setInt(1, bookId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Book book = new Book();
+                    book.setId(rs.getLong("id"));
+                    book.setTitle(rs.getString("title") != null ? rs.getString("title") : "");
+                    book.setAuthor(rs.getString("author") != null ? rs.getString("author") : "");
+                    book.setIsbn(rs.getString("isbn") != null ? rs.getString("isbn") : "");
+                    book.setIs_borrowed(rs.getBoolean("is_borrowed"));
+                    return book;
+                } else {
+                    return null; // Book not found
+                }
+            }
+        }
+    }
+    public static List<Book> fetchAllBorrowedBooks(Connection conn) throws SQLException {
+        String selectQuery = "SELECT * FROM books WHERE is_borrowed = 1"; // Assuming '1' for borrowed
+        List<Book> borrowedBooks = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(selectQuery);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Book book = new Book();
+
+                book.setId(Long.valueOf(rs.getInt("id")));
+                book.setTitle(rs.getString("title") != null ? rs.getString("title") : "");
+                book.setAuthor(rs.getString("author") != null ? rs.getString("author") : "");
+                book.setIsbn(rs.getString("isbn") != null ? rs.getString("isbn") : "");
+                book.setIs_borrowed(rs.getInt("is_borrowed") == 1);
+
+                borrowedBooks.add(book);
+            }
+        }
+        return borrowedBooks;
     }
 }

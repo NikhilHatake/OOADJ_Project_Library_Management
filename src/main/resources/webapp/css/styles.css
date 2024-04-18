@@ -1,47 +1,38 @@
+/* Import a professional font (replace with your desired font) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #222; /* Dark background */
+    color: #fff; /* White text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 .container {
-    max-width: 400px;
-    margin: 100px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-h1 {
     text-align: center;
 }
 
-input[type="text"],
-input[type="password"],
-button {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
+h1 {
+    font-size: 3em;
+    margin-bottom: 2em;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #000; /* Black button background */
+    color: #fff; /* White button text */
     border: none;
+    padding: 1em 2em;
+    font-size: 1.2em;
+    margin: 0 1em;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
 }
 
 button:hover {
-    opacity: 0.8;
-}
-#booksList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.book {
-    border: 1px solid #ccc;
-    padding: 15px;
+    background-color: #333; /* Slightly lighter shade on hover */
 }

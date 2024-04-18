@@ -6,46 +6,36 @@ body {
     padding: 20px;
     background-color: #222; /* Dark background */
     color: #fff; /* White text color */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Horizontal centering */
-    justify-content: center;
 
-}
-
-h1, h2 {
-    text-align: center;
 }
 
 h1 {
+    text-align: center;
     font-size: 2.5em;
     margin-bottom: 2em;
 }
 
-h2 {
-    font-size: 1.8em;
+#book-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 1em;
 }
 
-#add-book-form {
-    display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center;
-    width: 300px;
+#book-info label {
+    margin-right: 10px;
+    font-size: 1.2em;
 }
 
-#add-book input[type="text"] {
-    width: 100%;
-    max-width: 300px;
+#book-info input[type="text"] {
     padding: 8px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #333; /* Darker input background */
     color: #fff; /* White input text */
 }
 
-#add-book button {
+#book-info button {
     padding: 8px 15px;
     background-color: #000; /* Black button background */
     color: #fff; /* White button text */
@@ -53,9 +43,23 @@ h2 {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 10px
+    margin-left: 10px;
 }
 
-#add-book button:hover {
+#book-info button:hover {
     background-color: #333; /* Slightly lighter shade on hover */
+}
+
+#borrowed-books-container {
+    margin-top: 2em;
+}
+
+#borrowed-books-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+#borrowed-books-container li {
+    padding: 0.5em;
+    border-bottom: 1px solid #ccc;
 }
