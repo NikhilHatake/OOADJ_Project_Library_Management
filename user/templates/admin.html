@@ -1,0 +1,71 @@
+<html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: rgb(35, 35, 35);
+        color: white;
+        font-size: large;
+    }
+
+    .body {
+        display: flex;
+        margin: auto;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 250px;
+    }
+
+    h1 {
+        font-size: xxx-large;
+        margin-bottom: 50px;
+    }
+
+    input {
+        margin: 20px 0 20px 0;
+        background-color: #000000;
+        border: none;
+        padding: 12px;
+
+    }
+
+    button {
+        padding: 20px 50px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 80px;
+    }
+
+    button:hover {
+        background-color: #333;
+    }
+</style>
+
+<body>
+    <div class="body">
+        <h1>Admin Page</h1>
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="check()">Login</button>
+    </div>
+</body>
+<script>
+    async function check() {
+        const password = document.getElementById('password').value;
+        if (password === "qwerty") {
+            alert("successfull");
+            localStorage.setItem("user", "admin")
+            window.location.href = "http://localhost:8080/";
+        }
+        else {
+            alert("error");
+            document.getElementById('password').value = '';
+        }
+    }
+</script>
+
+</html>

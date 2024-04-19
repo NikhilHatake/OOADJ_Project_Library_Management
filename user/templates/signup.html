@@ -1,0 +1,95 @@
+<html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: rgb(35, 35, 35);
+        color: white;
+        font-size: large;
+    }
+
+    .body {
+        display: flex;
+        margin: auto;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 250px;
+    }
+
+    h1 {
+        font-size: xxx-large;
+        margin-bottom: 50px;
+    }
+
+    input {
+        margin: 20px 0 20px 0;
+        background-color: #000000;
+        border: none;
+        padding: 12px;
+
+    }
+
+    button {
+        padding: 20px 50px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 80px;
+    }
+
+    button:hover {
+        background-color: #333;
+    }
+</style>
+
+<body>
+    <div class="body">
+        <h1>SignUp Page</h1>
+        <input id="username" type="text" placeholder="Username" required  autocomplete="off">
+        <input id="password" type="password" placeholder="Password" required>
+        <input id="confirm_password" type="password" placeholder="Confirm Password" required>
+        <button onclick="signup()">SignUp</button>
+    </div>
+</body>
+<script>
+    async function signup() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const confirm_password = document.getElementById('confirm_password').value;
+        if (username === '' || password === '' || confirm_password === '') {
+            alert("empty inputs");
+        }
+        else {
+            if (password === confirm_password) {
+                const user = { "username": username, "password": password };
+                const response = await fetch('/signup',
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(user)
+                    });
+                if (response.ok) {
+                    alert("signup successfull");
+                    window.location.href = "/signin";
+                }
+                else {
+                    alert("signup failed");
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    document.getElementById('confirm_password').value = '';
+                }
+            }
+            else {
+                alert("passwords don't match");
+                document.getElementById('password').value = '';
+                document.getElementById('confirm_password').value = '';
+            }
+        }
+    }
+</script>
+
+</html>
