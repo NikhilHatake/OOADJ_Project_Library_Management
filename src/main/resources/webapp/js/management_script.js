@@ -211,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    fetchAndDisplayBooks();
 
 
 });

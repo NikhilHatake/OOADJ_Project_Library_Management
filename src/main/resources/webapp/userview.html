@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Library Books</h1>
+
+    <form id="searchForm">
+        <label for="searchBy">Search by:</label>
+        <select id="searchBy">
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+            <option value="isbn">ISBN</option>
+        </select>
+
+        <input type="text" id="searchInput" placeholder="Enter search term">
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="booksList"></div>
+
+
+</div>
+
+<script src="js/user.js"></script> </body>
+</html>

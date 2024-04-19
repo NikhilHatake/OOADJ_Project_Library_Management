@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookIdInput = document.getElementById('bookId');
     const message = document.getElementById('message');
 
+
+
     borrowButton.addEventListener('click', () => {
         const bookId = bookIdInput.value;
         borrowBook(bookId)
@@ -99,4 +101,24 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error fetching borrowed books:', error));
     }
     fetchAndDisplayBorrowedBooks();
+
+    function fetchAndDisplayBooks() {
+        fetch('/books')
+            .then(response => response.json())
+            .then(books => {
+                const bookListContainer = document.getElementById('book-list');
+                bookListContainer.innerHTML = ''; // Clear previous list
+
+                books.forEach(book => {
+                    const bookItem = document.createElement('div');
+                    bookItem.textContent = `${book.title} (ID: ${book.id})`;
+                    bookListContainer.appendChild(bookItem);
+                });
+            })
+            .catch(error => console.error('Error fetching books:', error));
+    }
+
+    // Call the function to initially display the books
+    fetchAndDisplayBooks();
+
 });
